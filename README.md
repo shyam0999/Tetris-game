@@ -1,55 +1,84 @@
-# Tetris Game (Console-Based)
+#include <iostream>
+#include <vector>
+#include <conio.h> // For keyboard input
+#include <windows.h> // For Sleep function
+#include <cstdlib>
 
-This is a simple **console-based Tetris game** written in C++ without any external libraries like SFML. The game is played using ASCII characters in the terminal.
+const int WIDTH = 10;
+const int HEIGHT = 20;
 
-## 🚀 Features
-- **Fully playable Tetris game** in the console
-- **Real-time keyboard controls** for movement and rotation
-- **Automatic block dropping** with adjustable speed
-- **Basic collision detection** for stacking blocks
+// Tetromino shapes
+const std::vector<std::vector<std::vector<int>>> tetrominoes = {
+    {{1, 1, 1, 1}}, // I
+    {{1, 1}, {1, 1}}, // O
+    {{0, 1, 0}, {1, 1, 1}}, // T
+    {{0, 1, 1}, {1, 1, 0}}, // S
+    {{1, 1, 0}, {0, 1, 1}}, // Z
+    {{1, 0, 0}, {1, 1, 1}}, // J
+    {{0, 0, 1}, {1, 1, 1}}  // L
+};
 
-## 🎮 Controls
-- **A** → Move Left
-- **D** → Move Right
-- **S** → Drop Faster
-- **W** → Rotate Block
-- **Esc** → Quit (Manually close the console)
+class Tetris {
+private:
+    std::vector<std::vector<int>> grid;
+    int score = 0;
+    int level = 1;
+    int speed = 500;
+    
+public:
+    Tetris() {
+        grid.resize(HEIGHT, std::vector<int>(WIDTH, 0));
+    }
+    
+    void display() {
+        system("cls");
+        std::cout << "Score: " << score << "  Level: " << level << "\n";
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                std::cout << (grid[i][j] ? "#" : ".") << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+    
+    void processInput() {
+        if (_kbhit()) {
+            char ch = _getch();
+            switch (ch) {
+                case 75: // Left arrow
+                    std::cout << "Move Left\n";
+                    break;
+                case 77: // Right arrow
+                    std::cout << "Move Right\n";
+                    break;
+                case 72: // Up arrow
+                    std::cout << "Rotate\n";
+                    break;
+                case 80: // Down arrow
+                    std::cout << "Soft Drop\n";
+                    break;
+                case 32: // Spacebar
+                    std::cout << "Hard Drop\n";
+                    break;
+                case 27: // Escape
+                    std::cout << "Pause/Exit\n";
+                    exit(0);
+            }
+        }
+    }
+    
+    void run() {
+        while (true) {
+            display();
+            processInput();
+            Sleep(speed);
+        }
+    }
+};
 
-## 🛠 How to Compile & Run
-
-### Windows
-1. Open **Command Prompt** and navigate to the game folder:
-   ```sh
-   cd path\to\your\tetris-game
-   ```
-2. Compile using **MinGW**:
-   ```sh
-   g++ tetris.cpp -o tetris.exe -std=c++11
-   ```
-3. Run the game:
-   ```sh
-   tetris.exe
-   ```
-
-### Linux/macOS
-1. Open **Terminal** and navigate to the game folder:
-   ```sh
-   cd path/to/your/tetris-game
-   ```
-2. Compile using **g++**:
-   ```sh
-   g++ tetris.cpp -o tetris -std=c++11
-   ```
-3. Run the game:
-   ```sh
-   ./tetris
-   ```
-
-## 🔧 Notes
-- The game **currently only works properly on Windows** because it uses `_kbhit()` and `_getch()` from `<conio.h>`.
-- For **Linux/macOS support**, `_kbhit()` needs to be replaced with a proper `termios` implementation.
-- The console **clears** itself every frame to simulate movement.
-
-## 📜 License
-This project is open-source and free to use. Feel free to modify and improve it!
+int main() {
+    Tetris game;
+    game.run();
+    return 0;
+}
 
